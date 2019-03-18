@@ -6,20 +6,14 @@
 
 using namespace std;
 
-struct Actor {
-
-	int age_;
-	string name_;
-	Actor(int age, string name) : age_(age), name_(name) {}
-	Actor() {}
-};
-
 template <typename T> struct server {
 public:
 	typedef vector<T> data_type;
 	server() {}
 
-	server(data_type data) : data_(data) {}
+	server(data_type const& data) : data_(data) {}
+
+	server(data_type && data) : data_(data) {}
 
 	server operator+(server b) {
 		assert(data_.size() == (*b).size());
@@ -28,11 +22,11 @@ public:
 		for (size_t i = 0; i < data_.size(); i++) {
 			tmp[i] = data_[i] + (*b)[i];
 		}
-		server<T> res(tmp);
+		server<T> res(std::move(tmp));
 		return res;
 	}
 	
-	void print() {
+	void print() const {
 		for (size_t i = 0; i < data_.size(); i++) {
 			cout << data_[i] << " ";
 		}
@@ -104,7 +98,7 @@ public:
 
 	size_t gather_num_partitions() { return values_.size(); }
 
-	void print() {
+	void print() const {
 		for (size_t i = 0; i < values_.size(); i++) {
 			cout << "Part " << i << endl;
 			for (size_t j = 0; j < (*(values_[i])).size(); j++) {
